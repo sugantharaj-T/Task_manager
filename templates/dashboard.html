@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="page-title">Project Dashboard</h1>
+      <p class="text-secondary mb-0">Track users, projects, sprints, deadlines and team activity.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-primary" href="{% url 'task_create' %}">New Task</a>
+      <a class="btn btn-outline-primary" href="{% url 'project_create' %}">New Project</a>
+    </div>
+  </div>
+
+  <div class="metric-grid mb-4">
+    <div class="metric"><span>Total Users</span><strong>{{ stats.users }}</strong></div>
+    <div class="metric"><span>Active Projects</span><strong>{{ stats.active_projects }}</strong></div>
+    <div class="metric"><span>Completed Projects</span><strong>{{ stats.completed_projects }}</strong></div>
+    <div class="metric"><span>Open Tasks</span><strong>{{ stats.open_tasks }}</strong></div>
+    <div class="metric danger"><span>Overdue</span><strong>{{ stats.overdue }}</strong></div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Active Project Health</h2>
+          <a href="{% url 'projects' %}">View all</a>
+        </div>
+        {% for project in projects %}
+          <div class="project-row">
+            <div>
+              <strong>{{ project.name }}</strong>
+              <p>{{ project.get_status_display }} · {{ project.members.count }} members · {{ project.tasks.count }} tasks</p>
+            </div>
+            <div class="progress project-progress">
+              <div class="progress-bar" style="width: {{ project.completion }}%">{{ project.completion }}%</div>
+            </div>
+          </div>
+        {% empty %}
+          <p class="empty-state">No projects yet. Create one to start planning.</p>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="panel">
+        <div class="panel-head"><h2>Upcoming Deadlines</h2></div>
+        {% for task in upcoming %}
+          <a class="task-link" href="{% url 'task_detail' task.pk %}">
+            <span class="priority {{ task.priority }}">{{ task.get_priority_display }}</span>
+            <strong>{{ task.title }}</strong>
+            <small>{{ task.project.name }} · due {{ task.due_date }}</small>
+          </a>
+        {% empty %}
+          <p class="empty-state">No upcoming tasks.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

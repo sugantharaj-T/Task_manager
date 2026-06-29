@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Kanban | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <div class="toolbar">
+    <div>
+      <h1 class="page-title">Kanban Board</h1>
+      <p class="text-secondary mb-0">Move work across To Do, In Progress, Review, Done and Blocked.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'task_create' %}">Create Task</a>
+  </div>
+  <div class="kanban-board">
+    {% for key,label in statuses %}
+      <section class="kanban-column" data-status="{{ key }}">
+        <h2>{{ label }}</h2>
+        {% for status_key, cards in grouped.items %}
+          {% if status_key == key %}
+            {% for task in cards %}
+              <article class="kanban-card">
+                <span class="priority {{ task.priority }}">{{ task.get_priority_display }}</span>
+                <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+                <small>{{ task.project.name }} - {% if task.assignee %}{{ task.assignee.get_full_name|default:task.assignee.username }}{% else %}Unassigned{% endif %}</small>
+                <div class="quick-status">
+                  {% for next_key,next_label in statuses %}
+                    {% if next_key != key %}<a href="{% url 'task_status' task.pk next_key %}" title="Move to {{ next_label }}">{{ next_label|slice:":1" }}</a>{% endif %}
+                  {% endfor %}
+                </div>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'task_edit' task.pk %}">Edit</a>
+              </article>
+            {% empty %}
+              <p class="empty-state small">No cards</p>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </section>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

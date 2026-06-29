@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Calendar | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <h1 class="page-title">Scheduling Calendar</h1>
+  <p class="text-secondary">Upcoming tasks from {{ start }} to {{ end }} with project timeline markers.</p>
+  <div class="timeline">
+    {% for task in tasks %}
+      <div class="timeline-item">
+        <time>{{ task.due_date }}</time>
+        <div>
+          <strong>{{ task.title }}</strong>
+          <p>{{ task.project.name }} · {{ task.get_status_display }} · {{ task.estimated_hours }}h estimate</p>
+        </div>
+      </div>
+    {% empty %}
+      <p class="empty-state">No deadlines in the next 30 days.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

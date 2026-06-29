@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Reports | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <h1 class="page-title">Reporting and Analytics</h1>
+  <div class="metric-grid mb-4">
+    <div class="metric"><span>Total Tasks</span><strong>{{ total }}</strong></div>
+    <div class="metric"><span>Completed</span><strong>{{ done }}</strong></div>
+    <div class="metric danger"><span>Overdue</span><strong>{{ overdue }}</strong></div>
+    <div class="metric"><span>Completion</span><strong>{{ completion }}%</strong></div>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="panel"><h2>Status Breakdown</h2>{% for row in by_status %}<div class="report-row"><span>{{ row.status }}</span><strong>{{ row.total }}</strong></div>{% empty %}<p class="empty-state">No data.</p>{% endfor %}</div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel"><h2>Priority Breakdown</h2>{% for row in by_priority %}<div class="report-row"><span>{{ row.priority }}</span><strong>{{ row.total }}</strong></div>{% empty %}<p class="empty-state">No data.</p>{% endfor %}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Profile | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <div class="panel profile-panel">
+    <div class="avatar">{{ profile.full_name|slice:":1" }}</div>
+    <div>
+      <h1 class="page-title">{{ profile.full_name }}</h1>
+      <p>{{ profile.get_role_display }} · {{ profile.designation|default:"No designation" }} · {{ profile.department|default:"No department" }}</p>
+      <p class="text-secondary">{{ user.email }} · {{ profile.contact|default:"No contact info" }}</p>
+    </div>
+  </div>
+  <div class="panel mt-4">
+    <h2>Assigned Tasks</h2>
+    {% for task in assigned %}
+      <a class="task-link" href="{% url 'task_detail' task.pk %}"><strong>{{ task.title }}</strong><small>{{ task.project.name }} · {{ task.due_date }}</small></a>
+    {% empty %}
+      <p class="empty-state">No assigned tasks.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

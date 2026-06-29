@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Projects | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <div class="toolbar">
+    <div>
+      <h1 class="page-title">Projects</h1>
+      <p class="text-secondary mb-0">Create projects, assign teams and monitor completion.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'project_create' %}">Create Project</a>
+  </div>
+  <form class="filter-bar" method="get">
+    <input class="form-control" name="q" value="{{ query }}" placeholder="Search project name or description">
+    <select class="form-select" name="status">
+      <option value="">All statuses</option>
+      {% for key,label in statuses %}<option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <button class="btn btn-dark">Filter</button>
+  </form>
+  <div class="card-grid">
+    {% for project in projects %}
+      <article class="project-card">
+        <div class="d-flex justify-content-between gap-3">
+          <h2>{{ project.name }}</h2>
+          <span class="status">{{ project.get_status_display }}</span>
+        </div>
+        <p>{{ project.description }}</p>
+        <div class="progress mb-3"><div class="progress-bar" style="width: {{ project.completion }}%"></div></div>
+        <div class="card-meta">
+          <span>{{ project.start_date }} to {{ project.end_date }}</span>
+          <span>{{ project.members.count }} members</span>
+          <span>{{ project.task_count }} tasks</span>
+        </div>
+        <div class="mt-3">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'project_edit' project.pk %}">Edit Project</a>
+        </div>
+      </article>
+    {% empty %}
+      <p class="empty-state">No projects match the current filter.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

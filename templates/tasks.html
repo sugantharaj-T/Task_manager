@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Tasks | TaskFlow{% endblock %}
+{% block content %}
+<section class="container-fluid px-4 py-4">
+  <div class="toolbar">
+    <div>
+      <h1 class="page-title">Tasks</h1>
+      <p class="text-secondary mb-0">Search by project, task, user, priority, status and assignee.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'task_create' %}">Create Task</a>
+  </div>
+  <form class="filter-bar wide" method="get">
+    <input class="form-control" name="q" value="{{ filters.q }}" placeholder="Search tasks, projects or users">
+    <select class="form-select" name="status"><option value="">All statuses</option>{% for key,label in statuses %}<option value="{{ key }}" {% if filters.status == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <select class="form-select" name="priority"><option value="">All priorities</option>{% for key,label in priorities %}<option value="{{ key }}" {% if filters.priority == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <select class="form-select" name="assignee"><option value="">All assignees</option>{% for person in users %}<option value="{{ person.id }}" {% if filters.assignee == person.id|stringformat:"s" %}selected{% endif %}>{{ person.get_full_name|default:person.username }}</option>{% endfor %}</select>
+    <button class="btn btn-dark">Filter</button>
+  </form>
+  <div class="table-responsive panel p-0">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Task</th><th>Project</th><th>Assignee</th><th>Priority</th><th>Status</th><th>Due</th><th></th></tr></thead>
+      <tbody>
+        {% for task in tasks %}
+          <tr>
+            <td><a class="fw-semibold" href="{% url 'task_detail' task.pk %}">{{ task.title }}</a></td>
+            <td>{{ task.project.name }}</td>
+            <td>{% if task.assignee %}{{ task.assignee.get_full_name|default:task.assignee.username }}{% else %}Unassigned{% endif %}</td>
+            <td><span class="priority {{ task.priority }}">{{ task.get_priority_display }}</span></td>
+            <td>{{ task.get_status_display }}</td>
+            <td>{{ task.due_date }}</td>
+            <td><a class="btn btn-sm btn-outline-primary" href="{% url 'task_edit' task.pk %}">Edit</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="empty-state">No tasks found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
